@@ -5,7 +5,7 @@ import { Cta, SectionHead } from '@/components/Blocks';
 import { site } from '@/data/site';
 import { services } from '@/data/services';
 
-const strip = ['Business Websites', 'Custom Systems', 'Laptop & Desktop Repairs', 'Printers & Copiers', 'Wi-Fi & LAN', 'Firewalls & VPN', 'Office 365', 'Genuine Licensing'];
+const strip = ['Business Websites', 'Custom Systems', 'Mobile Apps', 'Website & App Repair', 'Laptop & Desktop Repairs', 'Printers & Copiers', 'Wi-Fi & LAN', 'Firewalls & VPN', 'Office 365', 'Genuine Licensing'];
 
 const steps = [
   { title: 'Consult', text: 'We listen and learn your needs, free of charge.' },
@@ -96,8 +96,8 @@ export default function HomePage() {
 
       <section className="section">
         <div className="wrap">
-          <SectionHead eyebrow="What we do" title="Four services, one trusted team" />
-          <div className="grid grid-4">
+          <SectionHead eyebrow="What we do" title="Six services, one trusted team" />
+          <div className="grid grid-3">
             {services.map((s) => (
               <Link key={s.id} href={'/services#' + s.id} className="card card-link reveal">
                 <span className="icon"><Icon name={s.icon} /></span>

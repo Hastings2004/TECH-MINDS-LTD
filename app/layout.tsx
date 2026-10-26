@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: '%s | Tech Minds and General Dealers',
   },
   description:
-    'Websites and custom systems, computer and laptop repairs, business networks, and Office 365 setup in Lilongwe, Malawi. Free consultation and quote.',
+    'Websites, mobile apps and custom systems, website and app repair, computer and laptop repairs, business networks, and Office 365 setup in Lilongwe, Malawi. Free consultation and quote.',
   icons: { icon: '/images/favicon.svg' },
   openGraph: { type: 'website', siteName: site.name },
 };
@@ -24,7 +24,7 @@ export const viewport: Viewport = { themeColor: '#081222' };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={lato.variable}>
+    <html lang="en" className={lato.variable} data-scroll-behavior="smooth">
       <body>
         <a className="skip" href="#main">Skip to content</a>
         <Header />

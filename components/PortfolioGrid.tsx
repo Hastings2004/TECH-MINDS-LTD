@@ -1,10 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { revealElement } from '@/components/SiteEffects';
 import { categories, type Project, type ProjectCategory } from '@/data/projects';
 
 export default function PortfolioGrid({ projects }: { projects: Project[] }) {
   const [filter, setFilter] = useState<ProjectCategory | 'all'>('all');
+  const grid = useRef<HTMLDivElement>(null);
+  const firstRender = useRef(true);
+
+  // Switching tabs brings the matching projects in one after another
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    grid.current
+      ?.querySelectorAll<HTMLElement>('.project:not([hidden])')
+      .forEach((el, i) => revealElement(el, 'translateY(20px) scale(0.96)', 'translateY(0px) scale(1)', i * 0.07));
+  }, [filter]);
   // Only show tabs for categories that have projects
   const tabs = categories.filter((c) => projects.some((p) => p.category === c.id));
 
@@ -17,7 +32,7 @@ export default function PortfolioGrid({ projects }: { projects: Project[] }) {
           </button>
         ))}
       </div>
-      <div className="grid grid-3">
+      <div className="grid grid-3" ref={grid}>
         {projects.map((p) => (
           <article className="project reveal" key={p.title} hidden={filter !== 'all' && filter !== p.category}>
             <div className="thumb">
