@@ -34,7 +34,7 @@ data/                site content (see above)
 public/images/       favicon, team photos, portfolio screenshots
 ```
 
-## Commands (run in WSL, where Node.js is installed)
+## Commands (run in terminal, where Node.js is installed
 
 ```bash
 npm install        # first time only
@@ -50,14 +50,4 @@ already typed (number: `whatsappQuote` in `data/site.ts`). "Send by Email" opens
 email app addressed to `email`. Service buttons link to `/contact?service=...`, which
 pre-selects that service.
 
-## Deploy
 
-- **Vercel (recommended):** push to GitHub and import the repo at vercel.com/new, or run
-  `npx vercel` in this folder. Vercel detects Next.js and builds automatically.
-- **Any static host:** run `npm run build` and upload the `out/` folder.
-
-## Before going live
-
-Search for `TODO` and `[` in `data/site.ts` and `data/projects.ts`:
-office address, map location, opening hours, and projects for networking,
-repairs and Office 365.
