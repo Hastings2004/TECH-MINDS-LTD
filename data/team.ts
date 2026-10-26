@@ -26,7 +26,7 @@ export const team: TeamMember[] = [
   },
   {
     name: 'Owen Matola',
-    role: 'Lead Software Developer',
+    role: 'Core Founder & Lead Software Developer',
     bio: 'Leads our software team. Owen is a full-stack engineer building multi-tenant SaaS platforms with Next.js, NestJS and PostgreSQL. He studied Information Systems at the University of Malawi and is awaiting graduation with a BSc in ICT from Mzuzu University.',
     photo: '/images/team/owen.jpg',
     focus: '45% 38%',

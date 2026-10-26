@@ -57,6 +57,70 @@ export const services: Service[] = [
     tags: ['Business Websites', 'Online Stores', 'Management Systems', 'Dashboards'],
   },
   {
+    id: 'mobile',
+    name: 'Mobile App Development',
+    short: 'Mobile Apps',
+    icon: 'phone',
+    summary: 'Android and iOS apps for bookings, ordering, payments and staff tools, connected to your systems.',
+    heading: 'Put your business',
+    headingCyan: 'in their pocket',
+    intro: 'Fast, easy-to-use mobile apps built for your customers and staff, from first design to app store launch.',
+    cta: 'Request an app quote',
+    cards: [
+      {
+        icon: 'phone',
+        title: 'Android & iOS Apps',
+        items: [
+          { title: 'One App, Both Platforms', text: 'Cross-platform Flutter apps for Android and iPhone.' },
+          { title: 'Clean, Simple Design', text: 'Screens your customers understand at first use.' },
+          { title: 'Works on Slow Networks', text: 'Offline support and light data use.' },
+        ],
+      },
+      {
+        icon: 'code',
+        title: 'Backend & Launch',
+        items: [
+          { title: 'APIs & Admin Panels', text: 'Secure servers, databases and dashboards behind the app.' },
+          { title: 'Payments & Notifications', text: 'Mobile money, card payments, SMS and push alerts.' },
+          { title: 'App Store Publishing', text: 'Google Play and App Store setup and release.' },
+        ],
+      },
+    ],
+    tags: ['Android', 'iOS', 'Flutter', 'Mobile Money'],
+  },
+  {
+    id: 'app-repair',
+    name: 'Website & App Repair',
+    short: 'Website & App Repair',
+    icon: 'bug',
+    summary: 'Fixes for broken, slow or hacked websites and mobile apps, plus updates and ongoing maintenance.',
+    heading: 'Website or app',
+    headingCyan: 'not working?',
+    intro: 'We find what is broken, fix it without losing your data, and keep it running smoothly afterwards.',
+    cta: 'Get it fixed',
+    cards: [
+      {
+        icon: 'bug',
+        title: 'Fixes & Recovery',
+        items: [
+          { title: 'Bug Fixing & Error Repair', text: 'Broken pages, forms, logins and app crashes.' },
+          { title: 'Hacked Site Cleanup', text: 'Malware removal, security patches and restored access.' },
+          { title: 'Hosting & Domain Issues', text: 'Downtime, email, SSL and domain problems sorted.' },
+        ],
+      },
+      {
+        icon: 'wrench',
+        title: 'Updates & Maintenance',
+        items: [
+          { title: 'Speed & Performance', text: 'Faster loading on phones and slow connections.' },
+          { title: 'Updates & New Features', text: 'Content changes, upgrades and new functions.' },
+          { title: 'Backups & Monitoring', text: 'Regular backups and checks so problems are caught early.' },
+        ],
+      },
+    ],
+    tags: ['WordPress & Laravel', 'React & Next.js', 'Android & iOS Apps', 'Monthly Maintenance'],
+  },
+  {
     id: 'repairs',
     name: 'Hardware & Software Repairs',
     short: 'Repairs',

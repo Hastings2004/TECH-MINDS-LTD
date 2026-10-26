@@ -1,9 +1,39 @@
 'use client';
 
+import { animate, inView, scroll } from 'motion';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-// Page-wide motion: scroll progress bar, header shadow, reveal-on-scroll and count-up numbers.
+const ease = [0.22, 1, 0.36, 1] as const;
+
+const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+/**
+ * Fade an element in, then hand it back to the stylesheet so CSS hover transforms keep working.
+ * `from` and `to` must use the same transform functions (e.g. scale(0.92) → scale(1)); Motion can't blend to 'none'.
+ */
+export function revealElement(el: HTMLElement, from: string, to: string, delay = 0) {
+  const duration = 0.7;
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    el.classList.add('in');
+    el.style.removeProperty('opacity');
+    el.style.removeProperty('transform');
+  };
+  // Safety net: never leave content hidden if an animation fails or is interrupted
+  const fallback = window.setTimeout(finish, (duration + delay) * 1000 + 500);
+  animate(el, { opacity: [0, 1], transform: [from, to] }, { duration, delay, ease }).then(
+    () => {
+      clearTimeout(fallback);
+      finish();
+    },
+    finish,
+  );
+}
+
+// Page-wide motion (Motion library): scroll progress bar, header shadow, reveal-on-scroll and count-up numbers.
 // Runs again after every page change.
 export default function SiteEffects() {
   const pathname = usePathname();
@@ -12,22 +42,10 @@ export default function SiteEffects() {
   // Header shadow + scroll progress bar
   useEffect(() => {
     const header = document.querySelector('.site-header');
-    let ticking = false;
-    const update = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      if (progress.current) progress.current.style.transform = 'scaleX(' + (max > 0 ? window.scrollY / max : 0) + ')';
-      header?.classList.toggle('scrolled', window.scrollY > 10);
-      ticking = false;
-    };
-    const onScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(update);
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    update();
-    return () => window.removeEventListener('scroll', onScroll);
+    return scroll((p: number, info) => {
+      if (progress.current) progress.current.style.transform = 'scaleX(' + p + ')';
+      header?.classList.toggle('scrolled', info.y.current > 10);
+    });
   }, [pathname]);
 
   // Reveal on scroll
@@ -42,82 +60,65 @@ export default function SiteEffects() {
       });
 
     const reveals = Array.from(document.querySelectorAll<HTMLElement>('.reveal:not(.in)'));
-    reveals.forEach((el) => {
+    if (reducedMotion()) {
+      reveals.forEach((el) => el.classList.add('in'));
+      return;
+    }
+
+    const stops = reveals.map((el) => {
       // Vary the direction: side-by-side columns slide in, cards and photos zoom
-      if (el.matches('.row-main') || el.closest('.row-main')) el.classList.add('reveal-left');
-      else if (el.matches('.row-side')) el.classList.add('reveal-right');
-      else if (el.matches('.project, .member, .stat')) el.classList.add('reveal-zoom');
+      let [from, to] = ['translateY(28px)', 'translateY(0px)'];
+      if (el.matches('.row-main') || el.closest('.row-main')) [from, to] = ['translateX(-36px)', 'translateX(0px)'];
+      else if (el.matches('.row-side')) [from, to] = ['translateX(36px)', 'translateX(0px)'];
+      else if (el.matches('.project, .member, .stat')) [from, to] = ['scale(0.92)', 'scale(1)'];
       // Stagger siblings so a row of cards arrives one after another
       let i = 0;
       for (let sib = el.previousElementSibling; sib; sib = sib.previousElementSibling) {
         if (sib.classList.contains('reveal')) i++;
       }
-      if (i) el.style.transitionDelay = Math.min(i, 5) * 0.09 + 's';
+      const stop = inView(
+        el,
+        () => {
+          revealElement(el, from, to, Math.min(i, 5) * 0.09);
+          stop();
+        },
+        { amount: 0.12, margin: '0px 0px -40px 0px' },
+      );
+      return stop;
     });
-
-    const timers: number[] = [];
-    const show = (el: HTMLElement) => {
-      el.classList.add('in');
-      // Drop the stagger delay afterwards so hover effects respond instantly
-      if (el.style.transitionDelay) timers.push(window.setTimeout(() => (el.style.transitionDelay = ''), 1300));
-    };
-    if (!('IntersectionObserver' in window)) {
-      reveals.forEach(show);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            show(entry.target as HTMLElement);
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
-    );
-    reveals.forEach((el) => io.observe(el));
-    return () => {
-      io.disconnect();
-      timers.forEach(clearTimeout);
-    };
+    return () => stops.forEach((stop) => stop());
   }, [pathname]);
 
   // Count-up numbers (elements with data-count)
   useEffect(() => {
-    const counters = document.querySelectorAll<HTMLElement>('[data-count]');
-    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (!counters.length || reduceMotion || !('IntersectionObserver' in window)) return;
+    const counters = Array.from(document.querySelectorAll<HTMLElement>('[data-count]'));
+    if (!counters.length || reducedMotion()) return;
 
-    const countUp = (el: HTMLElement) => {
+    const controls: { stop: () => void }[] = [];
+    const stops = counters.map((el) => {
       const target = parseInt(el.dataset.count || '0', 10);
       const suffix = el.dataset.suffix || '';
-      const duration = 1400;
-      let start: number | null = null;
-      const step = (now: number) => {
-        if (start === null) start = now;
-        const t = Math.min((now - start) / duration, 1);
-        el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3))) + suffix;
-        if (t < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    };
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            countUp(entry.target as HTMLElement);
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.5 },
-    );
-    counters.forEach((el) => {
-      el.textContent = '0' + (el.dataset.suffix || '');
-      io.observe(el);
+      el.textContent = '0' + suffix;
+      const stop = inView(
+        el,
+        () => {
+          controls.push(
+            animate(0, target, {
+              duration: 1.4,
+              ease: 'easeOut',
+              onUpdate: (v) => (el.textContent = Math.round(v) + suffix),
+            }),
+          );
+          stop();
+        },
+        { amount: 0.5 },
+      );
+      return stop;
     });
-    return () => io.disconnect();
+    return () => {
+      stops.forEach((stop) => stop());
+      controls.forEach((c) => c.stop());
+    };
   }, [pathname]);
 
   return <div ref={progress} className="scroll-progress" aria-hidden="true" />;

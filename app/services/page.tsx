@@ -4,7 +4,7 @@ import Icon from '@/components/Icon';
 import { Cta, PageHead } from '@/components/Blocks';
 import { quoteHref, services } from '@/data/services';
 
-const description = 'Web and systems development, hardware and software repairs, network solutions, and Office 365 and licensing in Lilongwe, Malawi.';
+const description = 'Web and systems development, mobile app development, website and app repair, hardware and software repairs, network solutions, and Office 365 and licensing in Lilongwe, Malawi.';
 
 export const metadata: Metadata = {
   title: 'Our Services',

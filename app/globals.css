@@ -221,12 +221,9 @@ textarea.input { resize: vertical; }
 .footer-brand { font-weight: 900; letter-spacing: 1.5px; color: #fff; }
 .copyright { border-top: 1px solid var(--line); margin-top: 40px; padding-top: 20px; font-size: 13px; color: var(--dim); letter-spacing: 1px; }
 
-/* ---------- Reveal on scroll ---------- */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s var(--ease), transform .7s var(--ease), border-color .3s ease, box-shadow .3s ease; }
-.reveal-left { transform: translateX(-36px); }
-.reveal-right { transform: translateX(36px); }
-.reveal-zoom { transform: scale(.92); }
-.reveal.in { opacity: 1; transform: none; }
+/* ---------- Reveal on scroll (animated by SiteEffects with Motion) ---------- */
+/* Hidden until Motion animates it in; .in is added once it has arrived */
+.reveal:not(.in) { opacity: 0; }
 
 /* ---------- Motion ---------- */
 :root { --ease: cubic-bezier(.22, 1, .36, 1); }

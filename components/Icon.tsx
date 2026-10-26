@@ -83,6 +83,12 @@ const paths = {
       <path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7" />
     </>
   ),
+  bug: (
+    <>
+      <rect x="8" y="7" width="8" height="13" rx="4" />
+      <path d="M12 11v9M10 7.5 8.5 4M14 7.5 15.5 4M8 11H4M8 15.5H4.5M16 11h4M16 15.5h3.5" />
+    </>
+  ),
   menu: <path d="M4 7h16M4 12h16M4 17h16" />,
 };
 
